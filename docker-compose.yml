@@ -1,0 +1,39 @@
+version: '3'
+services:
+    db:
+      build:
+        context: ./forex_be/db
+        dockerfile: Dockerfile
+#        args:
+#          - MYSQL_DATABASE=$MYSQL_DATABASE
+#          - MYSQL_USER=$MYSQL_USER
+#          - MYSQL_PASSWORD=$MYSQL_PASSWORD
+#          - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+#          - MYSQL_HOST=$MYSQL_HOST
+#          - MYSQL_PORT=$MYSQL_PORT
+      environment:
+        - MYSQL_DATABASE=exchange_rate
+        - MYSQL_USER=user_forex
+        - MYSQL_PASSWORD=secret
+        - MYSQL_ROOT_PASSWORD=root
+        - MYSQL_HOST=192.168.99.100
+        - MYSQL_PORT=3306
+      command: mysqld --sql_mode=""
+      ports:
+        - "3306:3306"
+
+    api:
+      build:
+        context: ./forex_be/api
+        dockerfile: Dockerfile
+      ports:
+        - "80:8080"
+        - "443:443"
+      environment:
+        - DB_DATABASE=exchange_rate
+        - DB_USER=user_forex
+        - DB_PASSWORD=secret
+        - DB_HOST=192.168.99.100
+        - DB_PORT=3306
+      links:
+        - db
